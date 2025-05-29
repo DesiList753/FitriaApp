@@ -32,8 +32,8 @@ class _SplashScreenState extends State<SplashScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.network(
-                  'https://i.imgur.com/7OOih26.png',
+                Image(
+                  image: AssetImage('./assets/Logo.png'),
                   height: 120,
                   loadingBuilder: (context, child, loadingProgress) {
                     if (loadingProgress == null) return child;

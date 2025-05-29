@@ -10,8 +10,8 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: Row(
           children: [
-            Image.network(
-              'https://i.imgur.com/7OOih26.png',
+            Image(
+              image: AssetImage('./assets/Logo.png'),
               height: 32,
               loadingBuilder: (context, child, loadingProgress) {
                 if (loadingProgress == null) return child;
@@ -49,34 +49,36 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                '¡Hola, Isabel!',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    '¡Hola, Isabel!',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    'Martes, 15 de Agosto',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 6),
-              Text(
-                'Martes, 15 de Agosto',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey.shade600,
-                ),
-              ),
-              const SizedBox(height: 25),
-              DailyGoalCard(),
-              const SizedBox(height: 25),
+              const SizedBox(height: 15),
               const Text(
-                'Resumen de calorías',
+                'Recomendaciones de hoy',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 15),
-              CaloriesWidget(),
-              const SizedBox(height: 25),
+              PrioRecomendationWidget(),
+              SecRecomendationWidget(),
+              const SizedBox(height: 10),
               const Text(
                 'Restaurantes saludables cercanos',
                 style: TextStyle(
@@ -86,7 +88,7 @@ class HomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 15),
               Container(
-                height: 180,
+                height: 150,
                 decoration: BoxDecoration(
                   color: Colors.grey.shade200,
                   borderRadius: BorderRadius.circular(15),
@@ -99,7 +101,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 25),
+              const SizedBox(height: 5),
               const Text(
                 'Consejos del día',
                 style: TextStyle(
@@ -107,67 +109,20 @@ class HomeScreen extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 15),
               DailyTipCard(),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class DailyGoalCard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                const Icon(
-                  Icons.emoji_events,
-                  color: Colors.amber,
-                  size: 28,
-                ),
-                const SizedBox(width: 12),
-                const Expanded(
-                  child: Text(
-                    'Meta diaria',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Text(
-                  '75% completado',
-                  style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 15),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: LinearProgressIndicator(
-                value: 0.75,
-                backgroundColor: Colors.grey.shade300,
-                minHeight: 10,
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  Theme.of(context).primaryColor,
+              const SizedBox(height: 5),
+              const Text(
+                'Resumen de calorías',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 15),
+              CaloriesWidget(),
+              const SizedBox(height: 15),
+            ],
+          ),
         ),
       ),
     );
@@ -203,6 +158,58 @@ class CaloriesWidget extends StatelessWidget {
             value: '850',
             color: Colors.green.shade300,
             icon: Icons.hourglass_bottom,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class PrioRecomendationWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: RecomendCard(
+            title: 'Desayuno \nRecomendado',
+            image: 'https://www.buenoyvegano.com/wp-content/uploads/2017/09/muesli_-MaraZe_shutterstock.com_jpg.jpg',
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: RecomendCard(
+            title: 'Almuerzo \nRecomendado',
+            image: 'https://www.petalatino.com/wp-content/uploads/broccoli-cheese-pasta-602x455.jpg',
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class SecRecomendationWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: RecomendCard(
+            title: 'Merienda \nRecomendado',
+            image: 'https://recetasveganas.net/wp-content/uploads/2014/02/desayuno-merienda.jpg',
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: RecomendCard(
+            title: 'Cena \nRecomendado',
+            image: 'https://i.blogs.es/3ffb88/1366_2000/1200_800.jpeg',
+          ),
+        ),
+        Expanded(
+          child: RecomendCard(
+            title: 'Snack \nRecomendado',
+            image: 'https://delantaldealces.com/wp-content/uploads/2016/10/chips-boniato-1.jpg',
           ),
         ),
       ],
@@ -256,6 +263,48 @@ class CalorieCard extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class RecomendCard extends StatelessWidget {
+  final String title;
+  final String image;
+
+  const RecomendCard({
+    required this.title,
+    required this.image,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Image.network(
+            image,
+            height: 90,
+            fit: BoxFit.cover,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 3.0),
+            child: Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

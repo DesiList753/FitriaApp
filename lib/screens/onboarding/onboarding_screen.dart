@@ -81,8 +81,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         backgroundColor: Colors.transparent,
         title: Row(
           children: [
-            Image.network(
-              'https://i.imgur.com/7OOih26.png',
+            Image(
+              image: AssetImage('./assets/Logo.png'),
               height: 28,
               loadingBuilder: (context, child, loadingProgress) {
                 if (loadingProgress == null) return child;
