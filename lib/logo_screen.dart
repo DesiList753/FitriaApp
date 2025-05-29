@@ -1,0 +1,24 @@
+import 'package:flutter/material.dart';
+
+class LogoScreen extends StatelessWidget {
+  const LogoScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Image.network('https://i.imgur.com/7OOih26.png',height: 150,),
+              Text('Fitria',style: TextStyle(fontSize: 50, color: Color.fromRGBO(51, 54, 63, 1)),),
+            ],
+          ),
+        ],
+      ),
+      backgroundColor: Color.fromRGBO(50, 162, 135, 1),
+    );
+  }
+}
