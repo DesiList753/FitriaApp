@@ -23,7 +23,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         'Mantener mi peso',
         'Mejorar mi alimentación'
       ],
-      'image': 'assets/images/goal.png',
+      'image': 'lib/assets/images/goal.png',
     },
     {
       'question': '¿Qué tipo de dieta prefieres?',
@@ -33,7 +33,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         'Vegana',
         'Baja en carbohidratos'
       ],
-      'image': 'assets/images/diet.png',
+      'image': 'lib/assets/images/diet.jpg',
     },
     {
       'question': '¿Cuántas comidas haces al día?',
@@ -43,7 +43,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         '4 comidas',
         '5 o más comidas'
       ],
-      'image': 'assets/images/meals.png',
+      'image': 'lib/assets/images/meals.jpg',
     },
     {
       'question': '¿Con qué frecuencia haces ejercicio?',
@@ -53,7 +53,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         '3-4 veces por semana',
         'Todos los días'
       ],
-      'image': 'assets/images/exercise.png',
+      'image': 'lib/assets/images/exercise.jpg',
     },
   ];
 
@@ -81,20 +81,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         backgroundColor: Colors.transparent,
         title: Row(
           children: [
-            Image.network(
-              'https://i.imgur.com/7OOih26.png',
+            Image.asset(
+              'lib/assets/images/logo.webp',
               height: 28,
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
+              errorBuilder: (context, error, stackTrace) {
+                debugPrint('Error loading logo: $error');
                 return const SizedBox(
                   height: 28,
                   width: 28,
                 );
               },
-              errorBuilder: (context, error, stackTrace) => const SizedBox(
-                height: 28,
-                width: 28,
-              ),
             ),
             const SizedBox(width: 8),
             Text(
