@@ -7,7 +7,7 @@ class MealsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4,
+      length: 5,
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Recetas'),
@@ -20,6 +20,7 @@ class MealsScreen extends StatelessWidget {
             tabs: [
               Tab(text: 'Desayunos'),
               Tab(text: 'Almuerzos'),
+              Tab(text: 'Meriendas'),
               Tab(text: 'Cenas'),
               Tab(text: 'Snacks'),
             ],
@@ -29,6 +30,7 @@ class MealsScreen extends StatelessWidget {
           children: [
             MealCategoryList(category: 'Desayunos'),
             MealCategoryList(category: 'Almuerzos'),
+            MealCategoryList(category: 'Meriendas'),
             MealCategoryList(category: 'Cenas'),
             MealCategoryList(category: 'Snacks'),
           ],
@@ -135,7 +137,7 @@ class RecipeCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(15),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ClipRRect(
               borderRadius: const BorderRadius.only(
@@ -144,12 +146,13 @@ class RecipeCard extends StatelessWidget {
               ),
               child: Image.asset(
                 recipe['image'],
-                height: 180,
+                height: 140,
                 width: double.infinity,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
-                    height: 180,
+                    height: 140,
+                    width: double.infinity,
                     color: Colors.grey.shade300,
                     child: const Icon(
                       Icons.restaurant,

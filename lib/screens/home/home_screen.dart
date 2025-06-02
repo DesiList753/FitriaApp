@@ -166,27 +166,27 @@ class CaloriesWidget extends StatelessWidget {
 }
 
 class PrioRecomendationWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: RecomendCard(
-            title: 'Desayuno \nRecomendado',
-            image: 'https://www.buenoyvegano.com/wp-content/uploads/2017/09/muesli_-MaraZe_shutterstock.com_jpg.jpg',
+  @override 
+    Widget build(BuildContext context) {
+      return Row(
+        children: [
+          Expanded(
+            child: RecomendCard(
+              title: 'Desayuno \nRecomendado',
+              image: 'https://www.buenoyvegano.com/wp-content/uploads/2017/09/muesli_-MaraZe_shutterstock.com_jpg.jpg',
+            ),
           ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: RecomendCard(
-            title: 'Almuerzo \nRecomendado',
-            image: 'https://www.petalatino.com/wp-content/uploads/broccoli-cheese-pasta-602x455.jpg',
+          const SizedBox(width: 12),
+          Expanded(
+            child: RecomendCard(
+              title: 'Almuerzo \nRecomendado',
+              image: 'https://www.petalatino.com/wp-content/uploads/broccoli-cheese-pasta-602x455.jpg',
+            ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    }
   }
-}
 
 class SecRecomendationWidget extends StatelessWidget {
   @override

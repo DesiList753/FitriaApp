@@ -14,7 +14,6 @@ class _HydrationScreenState extends State<HydrationScreen> {
   @override
   Widget build(BuildContext context) {
     double progressValue = _waterGlasses / _dailyGoal;
-    
     return Scaffold(
       appBar: AppBar(
         title: const Text('Hidratación'),
@@ -95,7 +94,7 @@ class _HydrationScreenState extends State<HydrationScreen> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    if (_waterGlasses < _dailyGoal * 2) {
+                    if (_waterGlasses < _dailyGoal+1) {
                       setState(() {
                         _waterGlasses++;
                       });
