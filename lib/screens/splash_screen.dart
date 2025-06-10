@@ -32,31 +32,22 @@ class _SplashScreenState extends State<SplashScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image(
-                  image: AssetImage('./assets/Logo.png'),
+                Image.asset(
+                  'lib/assets/images/logo.webp',
                   height: 120,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
+                  errorBuilder: (context, error, stackTrace) {
+                    debugPrint('Error loading logo: $error');
                     return Container(
                       height: 120,
                       width: 120,
-                      child: const Center(
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                        ),
+                      color: Colors.white.withOpacity(0.2),
+                      child: const Icon(
+                        Icons.fitness_center,
+                        size: 60,
+                        color: Colors.white,
                       ),
                     );
                   },
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    height: 120,
-                    width: 120,
-                    color: Colors.white.withOpacity(0.2),
-                    child: const Icon(
-                      Icons.fitness_center,
-                      size: 60,
-                      color: Colors.white,
-                    ),
-                  ),
                 ),
                 const SizedBox(width: 10),
                 const Text(
