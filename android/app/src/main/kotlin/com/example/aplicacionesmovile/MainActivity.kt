@@ -1,4 +1,4 @@
-package com.example.aplicacionesmovile
+package com.example.fitria
 
 import io.flutter.embedding.android.FlutterActivity
 

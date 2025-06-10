@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "aplicacionesmovile" "\0"
+            VALUE "FileDescription", "fitria" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "aplicacionesmovile" "\0"
+            VALUE "InternalName", "fitria" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2025 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "aplicacionesmovile.exe" "\0"
-            VALUE "ProductName", "aplicacionesmovile" "\0"
+            VALUE "OriginalFilename", "fitria.exe" "\0"
+            VALUE "ProductName", "fitria" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
