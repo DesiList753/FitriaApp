@@ -17,7 +17,9 @@ class DietScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CaloriesSummary(),
-            const SizedBox(height: 24),
+            const SizedBox(height: 14),
+            DailyGoalCard(),
+            const SizedBox(height: 20),
             const Text(
               'Progreso Diario',
               style: TextStyle(
@@ -96,6 +98,63 @@ class DietScreen extends StatelessWidget {
               child: const Text(
                 'Generar Plan Semanal',
                 style: TextStyle(fontSize: 16),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class DailyGoalCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(13.0),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                const Icon(
+                  Icons.emoji_events,
+                  color: Colors.amber,
+                  size: 28,
+                ),
+                const SizedBox(width: 12),
+                const Expanded(
+                  child: Text(
+                    'Meta diaria',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Text(
+                  '75% completado',
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 15),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: LinearProgressIndicator(
+                value: 0.75,
+                backgroundColor: Colors.grey.shade300,
+                minHeight: 10,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  Theme.of(context).primaryColor,
+                ),
               ),
             ),
           ],
