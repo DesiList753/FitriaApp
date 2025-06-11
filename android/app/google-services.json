@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "208818262116",
+    "project_id": "fitria-122db",
+    "storage_bucket": "fitria-122db.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:208818262116:android:4cd82584186a36b08d8f71",
+        "android_client_info": {
+          "package_name": "com.example.fitria"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBko9HMwwkbYVA5ntZaiL78Bi-hJpM_fbM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
