@@ -219,11 +219,11 @@ class RecipeCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       Chip(
-                        backgroundColor: Colors.purple.shade50,
+                        backgroundColor: Colors.green.shade50,
                         label: Text(
                           recipe['difficulty'],
                           style: TextStyle(
-                            color: Colors.purple.shade900,
+                            color: Colors.green.shade900,
                           ),
                         ),
                       ),

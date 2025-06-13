@@ -10,19 +10,21 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: Row(
           children: [
-            Image(
-              image: AssetImage('./assets/Logo.png'),
-              height: 32,
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return const SizedBox(
+            ClipOval(
+              child: Image(
+                image: AssetImage('./assets/Logo.png'),
+                height: 32,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return const SizedBox(
+                    height: 32,
+                    width: 32,
+                  );
+                },
+                errorBuilder: (context, error, stackTrace) => const SizedBox(
                   height: 32,
                   width: 32,
-                );
-              },
-              errorBuilder: (context, error, stackTrace) => const SizedBox(
-                height: 32,
-                width: 32,
+                ),
               ),
             ),
             const SizedBox(width: 8),
