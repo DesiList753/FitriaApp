@@ -16,7 +16,15 @@ class AuthService {
   }
 
   // Registrar con email y contraseña
-  Future<UserCredential> registerWithEmailAndPassword(String email, String password, String name) async {
+  Future<UserCredential> registerWithEmailAndPassword(
+    String email,
+    String password,
+    String name, {
+    String? genero,
+    DateTime? birthDate,
+    double? peso,
+    double? height,
+  }) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       
@@ -25,6 +33,10 @@ class AuthService {
         'name': name,
         'email': email,
         'createdAt': FieldValue.serverTimestamp(),
+        'genero': genero,
+        'birthDate': birthDate?.toIso8601String(),
+        'peso': peso,
+        'height': height,
       });
       
       return result;
@@ -69,6 +81,24 @@ class AuthService {
     } catch (e) {
       print("Error getting user data: $e");
       return null;
+    }
+  }
+
+  // Actualizar los datos del usuario actual en Firestore
+  Future<void> updateCurrentUserData({
+    String? genero,
+    DateTime? birthDate,
+    double? peso,
+    double? height,
+  }) async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      await _firestore.collection('users').doc(user.uid).update({
+        if (genero != null) 'genero': genero,
+        if (birthDate != null) 'birthDate': birthDate.toIso8601String(),
+        if (peso != null) 'peso': peso,
+        if (height != null) 'height': height,
+      });
     }
   }
 }
