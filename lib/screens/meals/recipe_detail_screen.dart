@@ -3,13 +3,26 @@ import 'package:flutter/material.dart';
 class RecipeDetailScreen extends StatelessWidget {
   final Map<String, dynamic> recipe;
 
-  const RecipeDetailScreen({
-    super.key,
-    required this.recipe,
-  });
+  const RecipeDetailScreen({super.key, required this.recipe});
 
   @override
   Widget build(BuildContext context) {
+    final List<String> ingredients = List<String>.from(
+      recipe['ingredients'] ?? [],
+    );
+    final List<String> instructions = List<String>.from(
+      recipe['instructions'] ?? [],
+    );
+    final Map<String, String> nutrition = Map<String, String>.from(
+      recipe['nutrition'] ?? {},
+    );
+
+    // Metas diarias fijas (puedes ajustar estos valores según sea necesario)
+    final proteinGoal = 100;
+    final carbsGoal = 250;
+    final fatGoal = 70;
+    final fiberGoal = 30; // Meta diaria recomendada de fibra en gramos
+
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -34,29 +47,91 @@ class RecipeDetailScreen extends StatelessWidget {
               background: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.asset(
-                    recipe['image'],
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
+                  recipe['image'] != null &&
+                          recipe['image'].toString().startsWith('http')
+                      ? Image.network(
+                        recipe['image'],
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            color: Colors.grey.shade300,
+                            child: const Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.broken_image,
+                                  size: 40,
+                                  color: Colors.grey,
+                                ),
+                                SizedBox(height: 8),
+                                Text(
+                                  'Imagen no disponible',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      )
+                      : (recipe['image'] != null &&
+                          recipe['image'].toString().isNotEmpty)
+                      ? Image.asset(
+                        recipe['image'],
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            color: Colors.grey.shade300,
+                            child: const Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.broken_image,
+                                  size: 40,
+                                  color: Colors.grey,
+                                ),
+                                SizedBox(height: 8),
+                                Text(
+                                  'Imagen no disponible',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      )
+                      : Container(
                         color: Colors.grey.shade300,
-                        child: const Icon(
-                          Icons.restaurant,
-                          size: 60,
-                          color: Colors.white,
+                        child: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.broken_image,
+                              size: 40,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              'Imagen no disponible',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
                         ),
-                      );
-                    },
-                  ),
+                      ),
                   const DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          Colors.black54,
-                        ],
+                        colors: [Colors.transparent, Colors.black54],
                       ),
                     ),
                   ),
@@ -96,16 +171,11 @@ class RecipeDetailScreen extends StatelessWidget {
                   const SizedBox(height: 24),
                   const Text(
                     'Ingredientes',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
-                  // Lista simulada de ingredientes
-                  ...List.generate(
-                    5,
-                    (index) => Padding(
+                  ...ingredients.map(
+                    (ingredient) => Padding(
                       padding: const EdgeInsets.only(bottom: 8.0),
                       child: Row(
                         children: [
@@ -117,7 +187,7 @@ class RecipeDetailScreen extends StatelessWidget {
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              getIngredientText(index),
+                              ingredient,
                               style: const TextStyle(fontSize: 16),
                             ),
                           ),
@@ -128,16 +198,11 @@ class RecipeDetailScreen extends StatelessWidget {
                   const SizedBox(height: 24),
                   const Text(
                     'Instrucciones',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
-                  // Lista simulada de pasos
-                  ...List.generate(
-                    3,
-                    (index) => Padding(
+                  ...instructions.asMap().entries.map(
+                    (entry) => Padding(
                       padding: const EdgeInsets.only(bottom: 16.0),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -146,7 +211,7 @@ class RecipeDetailScreen extends StatelessWidget {
                             radius: 12,
                             backgroundColor: Theme.of(context).primaryColor,
                             child: Text(
-                              '${index + 1}',
+                              '${entry.key + 1}',
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 14,
@@ -156,7 +221,7 @@ class RecipeDetailScreen extends StatelessWidget {
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              getInstructionText(index),
+                              entry.value,
                               style: const TextStyle(fontSize: 16),
                             ),
                           ),
@@ -167,37 +232,37 @@ class RecipeDetailScreen extends StatelessWidget {
                   const SizedBox(height: 24),
                   const Text(
                     'Información nutricional',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
-                  // Información nutricional
-                  NutritionItem(
-                    nutrient: 'Proteínas',
-                    amount: '18g',
-                    percentage: 0.36,
-                    color: Colors.red.shade400,
-                  ),
-                  NutritionItem(
-                    nutrient: 'Carbohidratos',
-                    amount: '45g',
-                    percentage: 0.6,
-                    color: Colors.amber.shade400,
-                  ),
-                  NutritionItem(
-                    nutrient: 'Grasas',
-                    amount: '9g',
-                    percentage: 0.25,
-                    color: Colors.blue.shade400,
-                  ),
-                  NutritionItem(
-                    nutrient: 'Fibra',
-                    amount: '7g',
-                    percentage: 0.28,
-                    color: Colors.green.shade400,
-                  ),
+                  if (nutrition.isNotEmpty) ...[
+                    NutritionItem(
+                      nutrient: 'Proteínas',
+                      amount: nutrition['protein'] ?? '-',
+                      percentage:
+                          _parseGrams(nutrition['protein']) / proteinGoal,
+                      color: Colors.red.shade400,
+                    ),
+                    NutritionItem(
+                      nutrient: 'Carbohidratos',
+                      amount: nutrition['carbs'] ?? '-',
+                      percentage: _parseGrams(nutrition['carbs']) / carbsGoal,
+                      color: Colors.amber.shade400,
+                    ),
+                    NutritionItem(
+                      nutrient: 'Grasas',
+                      amount: nutrition['fat'] ?? '-',
+                      percentage: _parseGrams(nutrition['fat']) / fatGoal,
+                      color: Colors.blue.shade400,
+                    ),
+                    if (nutrition['fiber'] != null)
+                      NutritionItem(
+                        nutrient: 'Fibra',
+                        amount: nutrition['fiber']!,
+                        percentage: _parseGrams(nutrition['fiber']) / fiberGoal,
+                        color: Colors.green.shade400,
+                      ),
+                  ],
                 ],
               ),
             ),
@@ -220,24 +285,10 @@ class RecipeDetailScreen extends StatelessWidget {
     );
   }
 
-  String getIngredientText(int index) {
-    List<String> ingredients = [
-      '2 tomates medianos cortados en cubos',
-      '1 pepino pelado y en rodajas',
-      '1 cebolla roja en juliana',
-      '100g de queso feta desmenuzado',
-      'Aceitunas negras al gusto',
-    ];
-    return ingredients[index];
-  }
-
-  String getInstructionText(int index) {
-    List<String> instructions = [
-      'Lavar y cortar todos los vegetales según se indica y colocarlos en un bowl grande.',
-      'Agregar el queso feta desmenuzado y las aceitunas negras.',
-      'Aliñar con aceite de oliva, vinagre balsámico, sal y pimienta al gusto. Mezclar suavemente y servir frío.',
-    ];
-    return instructions[index];
+  double _parseGrams(String? value) {
+    if (value == null) return 0.0;
+    final num = double.tryParse(value.replaceAll('g', '').trim());
+    return num ?? 0.0;
   }
 }
 
@@ -264,26 +315,14 @@ class InfoCard extends StatelessWidget {
         padding: const EdgeInsets.all(12.0),
         child: Column(
           children: [
-            Icon(
-              icon,
-              color: iconColor,
-              size: 28,
-            ),
+            Icon(icon, color: iconColor, size: 28),
             const SizedBox(height: 8),
             Text(
               title,
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey.shade600,
-              ),
+              style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
             ),
             const SizedBox(height: 4),
-            Text(
-              value,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
           ],
         ),
       ),
@@ -315,10 +354,7 @@ class NutritionItem extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                nutrient,
-                style: const TextStyle(fontSize: 16),
-              ),
+              Text(nutrient, style: const TextStyle(fontSize: 16)),
               Text(
                 amount,
                 style: const TextStyle(

@@ -12,7 +12,7 @@ dependencies:
   firebase_auth: ^5.6.0
   firebase_core: ^3.14.0
   cloud_firestore: ^5.6.9
-  intl: ^0.19.0
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:
@@ -21,8 +21,11 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
   assets:
     - lib/assets/images/
+    - lib/assets/images/diet.jpg
+    - lib/assets/images/exercise.jpg
+    - lib/assets/images/goal.png
     - lib/assets/images/logo.webp
+    - lib/assets/images/meals.jpg
     - assets/Logo.png
