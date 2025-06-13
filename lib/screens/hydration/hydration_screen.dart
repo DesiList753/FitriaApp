@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class HydrationScreen extends StatefulWidget {
   const HydrationScreen({super.key});
@@ -8,12 +11,79 @@ class HydrationScreen extends StatefulWidget {
 }
 
 class _HydrationScreenState extends State<HydrationScreen> {
-  int _waterGlasses = 4;
+  int _waterGlasses = 0;
   final int _dailyGoal = 8;
-  
+  bool _loading = true;
+  Map<String, int> _weekData = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTodayData();
+    _loadWeekData();
+  }
+
+  Future<void> _loadTodayData() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('hidratacion')
+        .doc(today)
+        .get();
+    setState(() {
+      _waterGlasses = doc.data()?['vasos'] ?? 0;
+      _loading = false;
+    });
+  }
+
+  Future<void> _updateGlasses(int value) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    setState(() {
+      _waterGlasses = value;
+    });
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('hidratacion')
+        .doc(today)
+        .set({'date': today, 'vasos': value});
+    _loadWeekData();
+  }
+
+  Future<void> _loadWeekData() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    final now = DateTime.now();
+    Map<String, int> week = {};
+    for (int i = 6; i >= 0; i--) {
+      final date = now.subtract(Duration(days: i));
+      final key = DateFormat('yyyy-MM-dd').format(date);
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('hidratacion')
+          .doc(key)
+          .get();
+      week[key] = doc.data()?['vasos'] ?? 0;
+    }
+    setState(() {
+      _weekData = week;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double progressValue = _waterGlasses / _dailyGoal;
+    if (_loading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('Hidratación'),
@@ -80,9 +150,7 @@ class _HydrationScreenState extends State<HydrationScreen> {
                 ElevatedButton(
                   onPressed: () {
                     if (_waterGlasses > 0) {
-                      setState(() {
-                        _waterGlasses--;
-                      });
+                      _updateGlasses(_waterGlasses - 1);
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -94,10 +162,8 @@ class _HydrationScreenState extends State<HydrationScreen> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    if (_waterGlasses < _dailyGoal+1) {
-                      setState(() {
-                        _waterGlasses++;
-                      });
+                    if (_waterGlasses < _dailyGoal + 8) {
+                      _updateGlasses(_waterGlasses + 1);
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -163,15 +229,7 @@ class _HydrationScreenState extends State<HydrationScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      _buildBarChart('Lun', 0.6),
-                      _buildBarChart('Mar', 0.9),
-                      _buildBarChart('Mié', 0.7),
-                      _buildBarChart('Jue', 0.5),
-                      _buildBarChart('Vie', 0.8),
-                      _buildBarChart('Sáb', 0.3),
-                      _buildBarChart('Hoy', progressValue),
-                    ],
+                    children: _buildWeekBarChart(),
                   ),
                 ),
               ),
@@ -183,15 +241,16 @@ class _HydrationScreenState extends State<HydrationScreen> {
   }
 
   Widget _buildBarChart(String label, double value) {
+    final cappedValue = value.clamp(0.0, 1.0);
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         Container(
           width: 25,
-          height: 120 * value,
+          height: 120 * cappedValue,
           decoration: BoxDecoration(
-            color: value < 0.6 ? Colors.red.shade300 : 
-                   value < 0.8 ? Colors.yellow.shade600 : 
+            color: cappedValue < 0.6 ? Colors.red.shade300 : 
+                   cappedValue < 0.8 ? Colors.yellow.shade600 : 
                    Colors.green.shade400,
             borderRadius: BorderRadius.circular(5),
           ),
@@ -206,5 +265,18 @@ class _HydrationScreenState extends State<HydrationScreen> {
         ),
       ],
     );
+  }
+
+  List<Widget> _buildWeekBarChart() {
+    final now = DateTime.now();
+    final days = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+    List<Widget> bars = [];
+    for (int i = 0; i < 7; i++) {
+      final date = now.subtract(Duration(days: 6 - i));
+      final key = DateFormat('yyyy-MM-dd').format(date);
+      final value = (_weekData[key] ?? 0) / _dailyGoal;
+      bars.add(_buildBarChart(i == 6 ? 'Hoy' : days[date.weekday - 1], value));
+    }
+    return bars;
   }
 }

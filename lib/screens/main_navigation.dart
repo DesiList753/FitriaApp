@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'home/home_screen.dart';
 import 'hydration/hydration_screen.dart';
 import 'meals/meals_screen.dart';
 import 'diet/diet_screen.dart';
+import 'home/home_screen.dart';
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});

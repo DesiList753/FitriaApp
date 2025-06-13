@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../login_screen.dart';
+import '../onboarding/onboarding_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -9,19 +13,63 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final _formKey = GlobalKey<FormState>();
-  
+
   // Campos de información de usuario editables
-  String _name = 'Isabel Martínez';
-  String _email = 'isabel.martinez@email.com';
-  int _age = 28;
-  String _gender = 'Mujer';
-  double _height = 165;
-  double _weight = 62;
-  
+  String _name = '';
+  String _email = '';
+  int _age = 0;
+  String _gender = '';
+  double _height = 0;
+  double _weight = 0;
+
   bool _isEditing = false;
-  
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+      final data = doc.data();
+      setState(() {
+        _name = data?['name'] ?? '';
+        _email = data?['email'] ?? user.email ?? '';
+        _age = data?['age'] ?? 0;
+        _gender = data?['gender'] ?? '';
+        _height = (data?['height'] ?? 0).toDouble();
+        _weight = (data?['weight'] ?? 0).toDouble();
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _saveUserData() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+        'name': _name,
+        'email': _email,
+        'age': _age,
+        'gender': _gender,
+        'height': _height,
+        'weight': _weight,
+      }, SetOptions(merge: true));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mi Perfil'),
@@ -30,11 +78,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         actions: [
           IconButton(
             icon: Icon(_isEditing ? Icons.save : Icons.edit),
-            onPressed: () {
+            onPressed: () async {
               if (_isEditing) {
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState!.save();
-                  // Guardar los datos del usuario
+                  await _saveUserData();
                   setState(() {
                     _isEditing = false;
                   });
@@ -210,13 +258,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () {},
                 ),
+                ListTile(
+                  leading: const Icon(Icons.question_answer),
+                  title: const Text('Actualizar cuestionario'),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const OnboardingScreen(),
+                      ),
+                    );
+                  },
+                ),
                 const Divider(),
                 ListTile(
                   leading: Icon(Icons.logout, color: Colors.red.shade400),
                   title: Text('Cerrar sesión', 
                     style: TextStyle(color: Colors.red.shade400),
                   ),
-                  onTap: () {},
+                  onTap: () async {
+                    await FirebaseAuth.instance.signOut();
+                    if (!mounted) return;
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (context) => const LoginScreen()),
+                      (route) => false,
+                    );
+                  },
                 ),
               ],
             ],

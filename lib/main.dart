@@ -1,7 +1,7 @@
+import 'package:fitria/firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:fitria/screens/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,53 +20,8 @@ class MainApp extends StatelessWidget {
       title: 'Fitria',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primaryColor: const Color.fromRGBO(50, 162, 135, 1), // Usar el color del logo
-        colorScheme: ColorScheme.light(
-          primary: const Color.fromRGBO(50, 162, 135, 1),
-          secondary: const Color(0xFF009688),
-          surface: Colors.white,
-          background: const Color(0xFFF5F5F5),
-          onPrimary: Colors.white,
-        ),
-        fontFamily: 'Montserrat',
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-          ),
-        ),
-        cardTheme: CardTheme(
-          elevation: 2,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        ),
+        primarySwatch: Colors.green,
       ),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        primaryColor: const Color.fromRGBO(50, 162, 135, 1),
-        colorScheme: ColorScheme.dark(
-          primary: const Color.fromRGBO(50, 162, 135, 1),
-          secondary: const Color(0xFF00796B),
-          surface: const Color(0xFF121212),
-          background: const Color(0xFF121212),
-          onPrimary: Colors.white,
-        ),
-        fontFamily: 'Montserrat',
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-          ),
-        ),
-        cardTheme: CardTheme(
-          elevation: 2,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        ),
-      ),
-      themeMode: ThemeMode.system,
       home: const SplashScreen(),
     );
   }

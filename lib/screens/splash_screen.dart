@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
+import '../screens/login_screen.dart';
 import '../screens/onboarding/onboarding_screen.dart';
+import '../screens/main_navigation.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  const SplashScreen({Key? key}) : super(key: key);
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -13,65 +17,63 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(
-      const Duration(seconds: 3),
-      () => Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const OnboardingScreen()),
-      ),
-    );
+    _navigateAfterDelay();
+  }
+
+  Future<void> _navigateAfterDelay() async {
+    await Future.delayed(const Duration(seconds: 3));
+    if (!mounted) return;
+
+    User? currentUser;
+    try {
+      currentUser = FirebaseAuth.instance.currentUser;
+    } catch (e) {
+      print("Error checking auth state: $e");
+    }
+
+    if (currentUser != null) {
+      final userDoc =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(currentUser.uid)
+              .get();
+      final onboardingCompleted =
+          userDoc.data()?['onboardingCompleted'] ?? false;
+      if (onboardingCompleted) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const MainNavigation()),
+        );
+      } else {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const OnboardingScreen()),
+        );
+      }
+    } else {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(50, 162, 135, 1),
+      backgroundColor: Colors.green,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  'lib/assets/images/logo.webp',
-                  height: 120,
-                  errorBuilder: (context, error, stackTrace) {
-                    debugPrint('Error loading logo: $error');
-                    return Container(
-                      height: 120,
-                      width: 120,
-                      color: Colors.white.withOpacity(0.2),
-                      child: const Icon(
-                        Icons.fitness_center,
-                        size: 60,
-                        color: Colors.white,
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(width: 10),
-                const Text(
-                  "Fitria",
-                  style: TextStyle(
-                    fontSize: 48,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 40),
-            const CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              "Tu camino hacia la salud",
+          children: const [
+            Text(
+              'FITRIA',
               style: TextStyle(
+                fontSize: 42,
+                fontWeight: FontWeight.bold,
                 color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
               ),
+            ),
+            SizedBox(height: 24),
+            CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
             ),
           ],
         ),

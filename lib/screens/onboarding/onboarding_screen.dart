@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../onboarding/question_screen.dart';
 import '../main_navigation.dart';
 
@@ -57,17 +59,39 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     },
   ];
 
-  void _nextPage() {
+  final List<String?> _answers = [null, null, null, null];
+
+  void _nextPage([String? answer]) async {
+    if (answer != null) {
+      _answers[_currentPage] = answer;
+    }
     if (_currentPage < _totalPages - 1) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
     } else {
+      await _completeOnboarding();
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => const MainNavigation(),
         ),
+      );
+    }
+  }
+
+  Future<void> _completeOnboarding() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).set(
+        {
+          'onboardingCompleted': true,
+          'objetivo': _answers[0],
+          'tipoDieta': _answers[1],
+          'comidasPorDia': _answers[2],
+          'frecuenciaEjercicio': _answers[3],
+        },
+        SetOptions(merge: true),
       );
     }
   }
@@ -104,7 +128,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () {
+            onPressed: () async {
+              await _completeOnboarding();
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
                   builder: (context) => const MainNavigation(),
@@ -135,8 +160,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   options: _questions[index]['options'],
                   imageAsset: _questions[index]['image'],
                   onOptionSelected: (option) {
-                    // Aquí se guardaría la respuesta seleccionada
-                    _nextPage();
+                    _nextPage(option);
                   },
                 );
               },
